@@ -38,6 +38,7 @@ about this file`colliders.csv`, which contains the 2.5D map of the simulator env
 and the `backyard_flyer.py`use the`calculate_box` and `local_waypoints` to find the path.
 
 *how the functions provided in  `planning_utils.py`work
+
 1.`a_star`
   it is based on the based and the heurist,`heuristic` function is used in addition to the cost penalty. The `heuristic` function determines the  h()h()  value for each cell based on the goal cell and the method chosen to determine it. The heuristic value can be the Euclidean distance between these cells 
   * >c  is the current cost
@@ -45,6 +46,7 @@ and the `backyard_flyer.py`use the`calculate_box` and `local_waypoints` to find 
   * >h  is the heuristic function
   then the new cost is c+g+h
   also it is use PriorityQueue data structure ,to select the lowest cost partial plan .
+  
 2.`Aciton`
   An action is represented by a 3 element tuple.
     
@@ -53,16 +55,18 @@ and the `backyard_flyer.py`use the`calculate_box` and `local_waypoints` to find 
     is the cost of performing the action.
   and in my code there are 8 actions and 2 costs
 3.`vaild_action`
+
 return a list of vaild actions given a grid and current code,if the out drone meet a obstacles ,the action the drone act will be define as the invalid action,or else we will get the vaild actions,that is a great way to make us to choose how to avoid the obstacle and take  the all the action we need to  find the goal.
 
 4.`create_grid`
+
 the grid in fact is a matric ,there are 2 situations
 *  if there are obstacles in the gird ,the value is 1
 *  or else is zero 0
 and this function returns a grid representation of a 2d configuration space
 
 5.prune_path
- use the `collinearity_check` to prune the path ,just like the teacher said in the class ,if three points are collinear ,then we remove the second point from the path,and we remove repeatly until there are no points can be removed.
+use the `collinearity_check` to prune the path ,just like the teacher said in the class ,if three points are collinear ,then we remove the second point from the path,and we remove repeatly until there are no points can be removed.
  `def prune_path(path):
         pruned_path=[p for p in path]
         i=0;
@@ -74,9 +78,12 @@ and this function returns a grid representation of a 2d configuration space
                 pruned_path.remove(pruned_path[i+1])
             else:
                 i+=1
-        return pruned_path`
-        *the while i<len(pruned_path))-2.for example if we have 11 points,we don't need to check the the number of 11,12,13,because the the 12 points and the 13 points even is not exists,that is what I understand....
- 6.`collinearity_check`
+         return pruned_path`
+         
+     the while i<len(pruned_path))-2.for example if we have 11 points,we don't need to check the the number of 11,12,13,
+     because the the 12 points and the 13 points even is not exists,that is what I understand
+          
+  6.collinearity_check
    use the determination of the matrix to determine whether the three points are collinear or not.
    
  #Try running `motion_planning.py` to see what it does. 
@@ -102,6 +109,42 @@ The planning algorithm is going to look something like the following:
 
 
 ### Step 8: Write it up!
-
+* add the diagonal motion
+   ```add 4 actions into the Action class
+      the diagonal action with a cost of sqrt(2)
+         WEST=(0,-1,1)
+         EAST=(0,1,-1)
+         SORTH=(1,0,1)
+         NORTH=(-1,0,1)
+         SORTH_WEST=(1,-1,np.sqrt(2))
+         SORTH_EASR=(1,1,np.sqrt(2))
+         NORTH_WEST=(-1,1,np.sqrt(2))
+         NORTH_EAST=(-1,-1,np.sqrt(2))```
+  
+  
+ * add the following code into the `valid_action` 
+  `if x-1<0 or grid[x-1,y]==1:
+            valid_actions.remove(Action.NORTH)`
+            
+ * prune_path
+  ``def prune_path(path):
+        pruned_path=[p for p in path]
+        i=0;
+        while i<len(pruned_path)-2:
+            p1=point(pruned_path[i])
+            p2=point(pruned_path[i+1])
+            p3=point(pruned_path[i+2])
+            if collinearity_check(p1,p2,p3).
+                pruned_path.remove(pruned_path[i+1])
+            else:
+                i+=1
+        return pruned_path``
+        
+        
+  ###Step 9 : run the motion_planning
+   1.run the simulator
+   2.activate fcnd2 run `python my motionplanning.py`
+   
+  
 
 
