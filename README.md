@@ -141,7 +141,7 @@ The planning algorithm is going to look something like the following:
         return pruned_path``
         
         
-  ###Step 9 : run the motion_planning
+  ### Step 9 : run the motion_planning
    1.run the simulator
    2.activate fcnd2 run `python my motionplanning.py`
    
