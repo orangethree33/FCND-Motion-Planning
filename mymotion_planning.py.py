@@ -254,8 +254,11 @@ class MotionPlanning(Drone):
         # TODO: set home position to (lat0, lon0, 0)
 
         # TODO: retrieve current global position
- 
+        global_position=[self._latitude,self._longitude,self._altitude]
+        
         # TODO: convert to current local position using global_to_local()
+      
+        local_position=global_to_local(self.global_position,self.global_home)
         
         print('global home {0}, position {1}, local position {2}'.format(self.global_home, self.global_position,
                                                                          self.local_position))
@@ -290,7 +293,7 @@ class MotionPlanning(Drone):
         pruned_path=prune_path(path)
         print (len(pruned_path))
 
-        waypoints = [[p[0] + north_offset, p[1] + east_offset, TARGET_ALTITUDE, 0] for p in path]
+        waypoints = [[p[0] + north_offset, p[1] + east_offset, TARGET_ALTITUDE, 0] for p in pruned_path]
         # Set self.waypointsi
         self.waypoints = waypoints
         
