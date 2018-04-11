@@ -1,8 +1,10 @@
+
 import argparse
 import time
 import msgpack
 from enum import Enum, auto
-#import sys
+import sys
+
 import numpy as np
 from queue import PriorityQueue
 
@@ -11,8 +13,9 @@ from udacidrone import Drone
 from udacidrone.connection import MavlinkConnection
 from udacidrone.messaging import MsgID
 from udacidrone.frame_utils import global_to_local
-#goal_lat=
-#goal_lat=
+goal_lat=40
+goal_lon=40
+
 
 class States(Enum):
     MANUAL = auto()
@@ -23,7 +26,7 @@ class States(Enum):
     DISARMING = auto()
     PLANNING = auto()
 
-     
+     # Run A* to find a path from start to goal
 
 class Action(Enum):
     WEST=(0,-1,1)
@@ -162,8 +165,9 @@ class MotionPlanning(Drone):
         self.waypoints = []
         self.in_mission = True
         self.check_state = {}
-        
+
         self.grid_goal = [40,40]
+
         # initial state
         self.flight_state = States.MANUAL
 
@@ -256,7 +260,6 @@ class MotionPlanning(Drone):
              latlon = f.readline()
         ll = latlon.strip().replace(',', '').split(' ')
         lat0, lon0 = float(ll[1]), float(ll[3])
-        
         # TODO: set home position to (lat0, lon0, 0)
         self.set_home_position(lon0, lat0, 0)
         # TODO: retrieve current global position
@@ -278,11 +281,12 @@ class MotionPlanning(Drone):
         grid_start1 = (-north_offset, -east_offset)
         # TODO: convert start position to current position rather than map center
         grid_start = (int(local_position[0] + grid_start1[0]), int(local_position[1] + grid_start1[1]))
-        grid_goal = (int(goal_lat + grid_start1[0]), int(goal_lon + grid_start1[1]))
-        #grid_goal = (int(40 + grid_start1[0]), int(40 + grid_start1[1]))
+        
     
         # Set goal as some arbitrary position on the grid
-        
+        #grid_goal = (-north_offset + 40, -east_offset + 30)
+        grid_goal = (int(goal_lat + grid_start1[0]), int(goal_lon + grid_start1[1]))
+        #grid_goal = (int(40 + grid_start1[0]), int(40 + grid_start1[1]))
         #or other location such as 10m sorth and 20 west of map
         # TODO: adapt to set goal as latitude / longitude position and convert
 
@@ -328,11 +332,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
     #goal_lat=sys.argv[1]
     #goal_lon=sys.arge[2]
-    #print(int sys.argv[0])
+    #rint (s.argv[1
     
-
     conn = MavlinkConnection('tcp:{0}:{1}'.format(args.host, args.port), timeout=60)
     drone = MotionPlanning(conn)
     time.sleep(1)
 
     drone.start()
+
