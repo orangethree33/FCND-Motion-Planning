@@ -33,6 +33,7 @@ about this file`colliders.csv`, which contains the 2.5D map of the simulator env
 *  `motion_planning.py` and `planning_utils.py`.
 * Task in the project and explain the differences about the two scripts
 `motion_planning.py` is basically a modified version of `backyard_flyer.py` that leverages some extra functions in `planning_utils.py`. but in `motion_planning.py`use the A* to find the path to the goal we want,use the following method to implement A*
+
 1.plan_path
 2.path,_=a_star(gird,heuristic,gird_start,gird_goal)
 and the `backyard_flyer.py`use the`calculate_box` and `local_waypoints` to find the path.
@@ -68,9 +69,9 @@ and this function returns a grid representation of a 2d configuration space
 5.prune_path
 use the `collinearity_check` to prune the path ,just like the teacher said in the class ,if three points are collinear ,then we remove the second point from the path,and we remove repeatly until there are no points can be removed.
  `def prune_path(path):
-        pruned_path=[p for p in path]
-        i=0;
-        while i<len(pruned_path)-2:  
+      pruned_path=[p for p in path]
+      i=0;
+      while i<len(pruned_path)-2:  
             p1=point(pruned_path[i])
             p2=point(pruned_path[i+1])
             p3=point(pruned_path[i+2])
@@ -120,6 +121,7 @@ The planning algorithm is going to look something like the following:
          SORTH_EASR=(1,1,np.sqrt(2))
          NORTH_WEST=(-1,1,np.sqrt(2))
          NORTH_EAST=(-1,-1,np.sqrt(2))```
+         
   
   
  * add the following code into the `valid_action` 
@@ -127,6 +129,7 @@ The planning algorithm is going to look something like the following:
             valid_actions.remove(Action.NORTH)`
             
  * prune_path
+ 
   ``def prune_path(path):
         pruned_path=[p for p in path]
         i=0;
@@ -139,9 +142,41 @@ The planning algorithm is going to look something like the following:
             else:
                 i+=1
         return pruned_path``
-        
-        
-  ### Step 9 : run the motion_planning
+ * plan_path
+ 
+ ``def plan_path(self):
+        self.flight_state = States.PLANNING
+        print("Searching for a path ...")
+        TARGET_ALTITUDE = 5
+        SAFETY_DISTANCE = 5
+        self.target_position[2] = TARGET_ALTITUDE``
+
+  
+  * set the global home position
+    read the first line from the file'colliders.csv'
+    alter lat0, lon0  into floating point values
+  
+        ``with open('colliders.csv', 'r') as f:
+               latlon = f.readline()
+           ll = latlon.strip().replace(',', '').split(' ')
+           lat0, lon0 = float(ll[1]), float(ll[3])
+           self.set_home_position(lon0, lat0, 0)``
+           
+   * set the local positon to start position
+        ``retrieve current global position
+          global_position=[self._latitude,self._longitude,self._altitude]
+          # convert to current local position using global_to_local()
+         local_position=global_to_local(self.global_position,self.global_home)
+         print('global home {0}, position {1}, local position {2}'.format(self.global_home, self.global_position,
+                                                                         self.local_position))``
+                                                                         
+   * convert start position to current position rather than map center                                                                       
+        ``grid_start1 = (-north_offset, -east_offset)
+        grid_start = (int(local_position[0] + grid_start1[0]), int(local_position[1] + grid_start1[1])) ``
+    
+   
+   
+   ### Step 9 : run the motion_planning
    1.run the simulator
    2.activate fcnd2 run `python my motionplanning.py`
    
