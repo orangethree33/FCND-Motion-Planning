@@ -165,12 +165,12 @@ See the quad fly a jerky path of waypoints to the northeast for about 10 m then 
          
          global_position=[self._latitude,self._longitude,self._altitude]
          
-          # convert to current local position using global_to_local()
+        
           local_position=global_to_local(self.global_position,self.global_home)
           print('global home {0}, position {1}, local position {2}'.format(self.global_home, self.global_position,
                                                                          self.local_position))
                                                                          
-**convert start position to current position
+  * convert start position to current position
     - get the gird and the start offset
     
        grid_start1 = (-north_offset, -east_offset)
