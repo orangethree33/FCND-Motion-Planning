@@ -68,6 +68,7 @@ and this function returns a grid representation of a 2d configuration space
 
 5.prune_path
 use the `collinearity_check` to prune the path ,just like the teacher said in the class ,if three points are collinear ,then we remove the second point from the path,and we remove repeatly until there are no points can be removed.
+
  `def prune_path(path):
       pruned_path=[p for p in path]
       i=0;
@@ -81,25 +82,31 @@ use the `collinearity_check` to prune the path ,just like the teacher said in th
                 i+=1
          return pruned_path`
          
-     the while i<len(pruned_path))-2.for example if we have 11 points,we don't need to check the the number of 11,12,13,
+         
+     while i<len(pruned_path))-2. 
+     if we have 11 points,we don't need to check the the number of 11,12,13,
      because the the 12 points and the 13 points even is not exists,that is what I understand
           
   6.collinearity_check
    use the determination of the matrix to determine whether the three points are collinear or not.
    
- #Try running `motion_planning.py` to see what it does. 
- To do this, first start up the simulator, then at the command line:
+  #Try running `motion_planning.py` to see what it does. 
+   To do this, first start up the simulator, then at the command line:
  
 ```sh
 source activate fcnd # if you haven't already sourced your Python environment, do so now.
 python motion_planning.py
 ```
+See the quad fly a jerky path of waypoints to the northeast for about 10 m then land. 
 
-See the quad fly a jerky path of waypoints to the northeast for about 10 m then land.  
+---
+---
+---
+
 
 ### Step 7: Write your planner
 
-The planning algorithm is going to look something like the following:
+>The planning algorithm is going to look something like the following:
 
 - Load the 2.5D map in the `colliders.csv` file describing the environment.
 - Discretize the environment into a grid or graph representation.
@@ -109,9 +116,12 @@ The planning algorithm is going to look something like the following:
 - Return waypoints in local ECEF coordinates (format for `self.all_waypoints` is [N, E, altitude, heading], where the drone’s start location corresponds to [0, 0, 0, 0]). 
 
 
+***
+
+
 ### Step 8: Write it up!
 * add the diagonal motion
-   ```add 4 actions into the Action class
+   ```
       the diagonal action with a cost of sqrt(2)
          WEST=(0,-1,1)
          EAST=(0,1,-1)
@@ -122,63 +132,54 @@ The planning algorithm is going to look something like the following:
          NORTH_WEST=(-1,1,np.sqrt(2))
          NORTH_EAST=(-1,-1,np.sqrt(2))```
          
-  
-  
  * add the following code into the `valid_action` 
-  `if x-1<0 or grid[x-1,y]==1:
-            valid_actions.remove(Action.NORTH)`
-            
- * prune_path
- 
-  ``def prune_path(path):
-        pruned_path=[p for p in path]
-        i=0;
-        while i<len(pruned_path)-2:
-            p1=point(pruned_path[i])
-            p2=point(pruned_path[i+1])
-            p3=point(pruned_path[i+2])
-            if collinearity_check(p1,p2,p3).
-                pruned_path.remove(pruned_path[i+1])
-            else:
-                i+=1
-        return pruned_path``
+     ```  
+     if x-1<0 or grid[x-1,y]==1:
+     valid_actions.remove(Action.NORTH)
+                                   
  * plan_path
- 
- ``def plan_path(self):
+    
+   `def plan_path(self):
         self.flight_state = States.PLANNING
         print("Searching for a path ...")
         TARGET_ALTITUDE = 5
         SAFETY_DISTANCE = 5
-        self.target_position[2] = TARGET_ALTITUDE``
+        self.target_position[2] = TARGET_ALTITUDE` 
 
   
-  * set the global home position
-    read the first line from the file'colliders.csv'
-    alter lat0, lon0  into floating point values
+ * set the global home position
   
-        ``with open('colliders.csv', 'r') as f:
+   - read the first line from the file'colliders.csv'
+   - and alter lat0, lon0  into floating point values
+  
+       
+        
+           `with open('colliders.csv', 'r') as f:
                latlon = f.readline()
            ll = latlon.strip().replace(',', '').split(' ')
            lat0, lon0 = float(ll[1]), float(ll[3])
-           self.set_home_position(lon0, lat0, 0)``
+           self.set_home_position(lon0, lat0, 0)`
+           ```
            
    * set the local positon to start position
-        ``retrieve current global position
-          global_position=[self._latitude,self._longitude,self._altitude]
-          # convert to current local position using global_to_local()
-         local_position=global_to_local(self.global_position,self.global_home)
-         print('global home {0}, position {1}, local position {2}'.format(self.global_home, self.global_position,
-                                                                         self.local_position))``
+        - retrieve current global position
+        -use the global_to_local to  convert to local position 
+         
+          `global_position=[self._latitude,self._longitude,self._altitude]
+            # convert to current local position using global_to_local()
+            local_position=global_to_local(self.global_position,self.global_home)
+            print('global home {0}, position {1}, local position {2}'.format(self.global_home, self.global_position,
+                                                                         self.local_position))`
                                                                          
-   * convert start position to current position rather than map center                                                                       
-        ``grid_start1 = (-north_offset, -east_offset)
-        grid_start = (int(local_position[0] + grid_start1[0]), int(local_position[1] + grid_start1[1])) ``
+   * convert start position to current position rather than map center  
+      - get the gird and the start offset
+      `grid_start1 = (-north_offset, -east_offset)
+        grid_start = (int(local_position[0] + grid_start1[0]), int(local_position[1] + grid_start1[1])) `
     
-   
-   
    ### Step 9 : run the motion_planning
-   1.run the simulator
-   2.activate fcnd2 run `python my motionplanning.py`
+     >1.run the simulator
+   
+     >2.activate fcnd2 run `python my motionplanning.py`
    
   
 
