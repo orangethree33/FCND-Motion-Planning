@@ -152,28 +152,29 @@ See the quad fly a jerky path of waypoints to the northeast for about 10 m then 
    - read the first line from the file'colliders.csv'
    - and alter lat0, lon0  into floating point values
   
-       
-        
-           `with open('colliders.csv', 'r') as f:
+        `with open('colliders.csv', 'r') as f:
                latlon = f.readline()
            ll = latlon.strip().replace(',', '').split(' ')
            lat0, lon0 = float(ll[1]), float(ll[3])
            self.set_home_position(lon0, lat0, 0)`
-           ```
            
-   * set the local positon to start position
-        - retrieve current global position
-        -use the global_to_local to  convert to local position 
+           
+* set the local positon to start position
+     - retrieve current global position
+     -use the global_to_local to  convert to local position 
          
-          `global_position=[self._latitude,self._longitude,self._altitude]
-            # convert to current local position using global_to_local()
-            local_position=global_to_local(self.global_position,self.global_home)
-            print('global home {0}, position {1}, local position {2}'.format(self.global_home, self.global_position,
+         `global_position=[self._latitude,self._longitude,self._altitude]
+         
+          # convert to current local position using global_to_local()
+          local_position=global_to_local(self.global_position,self.global_home)
+          print('global home {0}, position {1}, local position {2}'.format(self.global_home, self.global_position,
                                                                          self.local_position))`
                                                                          
-   * convert start position to current position rather than map center  
-      - get the gird and the start offset
-      `grid_start1 = (-north_offset, -east_offset)
+* convert start position to current position rather than map center  
+   
+    - get the gird and the start offset
+       `grid_start1 = (-north_offset, -east_offset)
+       
         grid_start = (int(local_position[0] + grid_start1[0]), int(local_position[1] + grid_start1[1])) `
     
    ### Step 9 : run the motion_planning
